@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <meta name="author" content="Danny Delaney">
+    <title>UI Programming 23 24</title>
+    <link href="assets/css/screen.css" rel="stylesheet" text="text/css">
+</head>
+<body>
+    <!-- <form name="helloForm" method="get" action="index.html" onsubmit="validateForm()">
+        My Name: <input type="text" name="name">
+        <input type="submit" value="Submit">
+    </form> -->
+    <button id="showCanvasButton">log in</button>
+    <button id="hiddenButton" onmousedown="clickBackInTime()" class="button back">Back In Time</button>
+    <button id="hideCanvasButton" >log out</button>
+    <section class="wrapper">
+        <canvas id="the_canvas"  width="1200" height="900">
+            Oops! looks like your browser does not support canvas tag
+        </canvas>
+    </section>
+    <table id="hiddenTable">
+        <tbody>
+            <tr>
+                <td>&nbsp;</td>
+                <td><button ontouchstart="clickDpadYellow()" ontouchend="clickableDpadReleased()" onmousedown="clickDpadYellow()" onmouseup="clickableDpadReleased()" class="button yellow round">Y</button></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td><button ontouchstart="clickDpadBlue()" ontouchend="clickableDpadReleased()" onmousedown="clickDpadBlue()" onmouseup="clickableDpadReleased()" class="button blue round">X</button></td>
+                <td>&nbsp;</td>
+                <td><button ontouchstart="clickDpadRed()" ontouchend="clickableDpadReleased()" onmousedown="clickDpadRed()" onmouseup="clickableDpadReleased()" class="button red round">B</button></td>
+            </tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td><button ontouchstart="clickDpadGreen()" ontouchend="clickableDpadReleased()" onmousedown="clickDpadGreen()" onmouseup="clickableDpadReleased()" class="button green round">A</button></td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+        </tbody>
+    </table>
+    <script src="main.js"></script>
+    <script type="text/javascript" src="assets/js/script.js"></script>
+
+</body>
+</html>

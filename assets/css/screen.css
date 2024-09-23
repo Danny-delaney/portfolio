@@ -1,0 +1,105 @@
+section.wrapper {
+    text-align: center;
+}
+
+canvas {
+    display: inline;
+    outline: 1px solid black;
+    max-height: 70vh;
+    max-width: 100vw;
+}
+
+#showCanvasButton {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    display: none;
+}
+
+#hideCanvasButton {
+    display: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.button {
+    background-color: #000000;
+    border: none;
+    box-shadow: 0 9px#505050;
+    padding: 30px;
+    text-align: center;
+    font-size: 28px;
+}
+
+    .button:hover {
+        background-color: #3F3F3F;
+    }
+
+    .button:active {
+        box-shadow: 0 5px #3D3D3D;
+        transform: translateY(5px);
+    }
+
+.pressed {
+    box-shadow: 0 5px #3D3D3D;
+    transform: translateY(5px);
+}
+
+.red {
+    color: #FF0000;
+}
+
+.green {
+    color: #00FF00;
+}
+
+.blue {
+    color: #0000FF;
+}
+
+.yellow {
+    color: #FFFF00;
+}
+
+.round {
+    border-radius: 50%;
+}
+
+#canvas {
+    border: 2px solid black;
+}
+
+#canvas-container {
+    margin-top: 30px; /* Adjust the margin as needed */
+}
+
+.back {
+    color: white;
+    justify-content: flex-end;
+    margin: 30px 10px;
+}
+
+body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#hiddenTable {
+    display: inline;
+}
+
+#hiddenButton {
+    display: inline;
+}
