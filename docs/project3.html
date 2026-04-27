@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Snow Way Out — Danny Delaney</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #020408; --surface: #060d14; --cyan: #00f5ff;
+      --green: #00ff88; --red: #ff003c; --border: rgba(0,245,255,0.15);
+      --text: #c8e6f0; --muted: #3a5a6a;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-weight: 300;
+      overflow-x: hidden; cursor: crosshair;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
+      pointer-events: none; z-index: 9999;
+    }
+    body::after {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px; pointer-events: none; z-index: 0;
+    }
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 3rem; border-bottom: 1px solid var(--border);
+      background: rgba(2,4,8,0.85); backdrop-filter: blur(12px);
+    }
+    .nav-logo { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 1rem; color: var(--cyan); letter-spacing: 0.15em; text-decoration: none; }
+    .nav-back { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--muted); text-decoration: none; letter-spacing: 0.2em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-back:hover { color: var(--cyan); }
+    .nav-back::before { content: '← '; }
+
+    /* HERO */
+    .proj-hero {
+      position: relative; z-index: 1; min-height: 60vh; display: flex; flex-direction: column;
+      justify-content: flex-end; padding: 8rem 3rem 4rem; border-bottom: 1px solid var(--border);
+    }
+    .proj-num {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--green);
+      letter-spacing: 0.35em; text-transform: uppercase; margin-bottom: 1rem;
+      opacity: 0; animation: fadeUp 0.5s 0.2s forwards;
+    }
+    .proj-num::before { content: '> '; }
+    .proj-title {
+      font-family: 'Orbitron', monospace; font-weight: 900;
+      font-size: clamp(2rem, 7vw, 5.5rem); line-height: 0.95; color: #fff;
+      opacity: 0; animation: fadeUp 0.5s 0.35s forwards;
+    }
+    .proj-tagline {
+      font-family: 'Share Tech Mono', monospace; font-size: 1rem; color: var(--cyan);
+      margin-top: 1.25rem; letter-spacing: 0.08em; opacity: 0; animation: fadeUp 0.5s 0.5s forwards;
+    }
+    .proj-meta { display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem; opacity: 0; animation: fadeUp 0.5s 0.65s forwards; }
+    .meta-label { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.3rem; }
+    .meta-val { font-family: 'Share Tech Mono', monospace; font-size: 0.82rem; color: var(--text); }
+
+    /* BODY */
+    .proj-body { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 5rem 3rem; }
+    .section-block { margin-bottom: 4rem; }
+    .block-label { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; letter-spacing: 0.4em; text-transform: uppercase; color: var(--green); margin-bottom: 0.6rem; }
+    .block-label::before { content: '// '; }
+    .block-title { font-family: 'Orbitron', monospace; font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 1.25rem; }
+    p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1rem; }
+
+    /* VIDEO / GIF */
+    .video-box {
+      width: 100%; aspect-ratio: 16/9; border: 1px solid var(--border); background: var(--surface);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 1rem; margin-bottom: 0.75rem; position: relative; overflow: hidden;
+    }
+    .video-box::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(0,245,255,0.04) 0%, transparent 60%); }
+    .video-icon { font-size: 3rem; opacity: 0.3; }
+    .video-label { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.25em; text-transform: uppercase; }
+    .gif-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem; }
+    .gif-box { aspect-ratio: 4/3; border: 1px solid var(--border); background: var(--surface); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; }
+    .gif-box .video-icon { font-size: 2rem; }
+    .gif-hint { font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.15em; text-align: center; padding: 0 1rem; }
+
+    /* TECH STACK */
+    .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+    .tech-item { border: 1px solid var(--border); background: var(--surface); padding: 1rem 1.25rem; position: relative; overflow: hidden; }
+    .tech-item::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--cyan); }
+    .tech-name { font-family: 'Orbitron', monospace; font-size: 0.75rem; font-weight: 700; color: #fff; margin-bottom: 0.3rem; }
+    .tech-desc { font-family: 'Share Tech Mono', monospace; font-size: 0.65rem; color: var(--muted); letter-spacing: 0.05em; }
+
+    /* FEATURE LIST */
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .feature-list li { font-size: 0.92rem; color: var(--muted); line-height: 1.6; padding-left: 1.5rem; position: relative; }
+    .feature-list li::before { content: '▸'; position: absolute; left: 0; color: var(--cyan); font-size: 0.8rem; }
+
+    /* ARCHITECTURE DIAGRAM */
+    .arch-diagram {
+      border: 1px solid var(--border); background: var(--surface);
+      padding: 2rem; display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem; align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .arch-node {
+      border: 1px solid var(--cyan); padding: 1rem;
+      font-family: 'Share Tech Mono', monospace; font-size: 0.72rem;
+      color: var(--cyan); letter-spacing: 0.08em;
+    }
+    .arch-node-label {
+      font-family: 'Orbitron', monospace; font-size: 0.65rem;
+      font-weight: 700; color: #fff; margin-bottom: 0.5rem;
+    }
+    .arch-node ul { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+    .arch-node ul li { color: var(--muted); font-size: 0.65rem; }
+    .arch-node ul li::before { content: '· '; color: var(--cyan); }
+    .arch-arrow {
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--muted);
+      text-align: center;
+    }
+    .arch-arrow-line {
+      width: 100%; height: 1px; background: var(--muted); position: relative;
+    }
+    .arch-arrow-line::after {
+      content: ''; position: absolute; right: -4px; top: -3px;
+      border: 4px solid transparent; border-left-color: var(--muted);
+    }
+
+    /* SECURITY TABLE */
+    .sec-table { width: 100%; border-collapse: collapse; }
+    .sec-table th {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--green);
+      text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid var(--border);
+    }
+    .sec-table td {
+      font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
+      color: var(--muted); padding: 0.75rem 1rem; border-bottom: 1px solid rgba(0,245,255,0.06);
+      vertical-align: top; line-height: 1.6;
+    }
+    .sec-table tr:hover td { background: rgba(0,245,255,0.02); }
+    .sec-table td:first-child { color: var(--red); white-space: nowrap; }
+    .sec-table td:last-child { color: var(--text); }
+
+    /* SPLIT CONTRIBUTION */
+    .contrib-split {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+    }
+    .contrib-box {
+      border: 1px solid var(--border); background: var(--surface);
+      padding: 2rem; position: relative;
+    }
+    .contrib-box.mine::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--green));
+    }
+    .contrib-box.partner::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 100%; height: 3px; background: var(--muted);
+    }
+    .contrib-title {
+      font-family: 'Orbitron', monospace; font-size: 0.8rem;
+      font-weight: 700; color: #fff; margin-bottom: 1rem; letter-spacing: 0.05em;
+    }
+    .contrib-box ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .contrib-box ul li { font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--muted); padding-left: 1.2rem; position: relative; line-height: 1.5; }
+    .contrib-box.mine ul li::before { content: '▸'; position: absolute; left: 0; color: var(--cyan); }
+    .contrib-box.partner ul li::before { content: '▸'; position: absolute; left: 0; color: var(--muted); }
+
+    /* CTA */
+    .proj-cta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 3rem; padding-top: 3rem; border-top: 1px solid var(--border); }
+    .btn { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; padding: 0.75rem 2rem; border: 1px solid var(--cyan); color: var(--cyan); background: transparent; cursor: pointer; position: relative; overflow: hidden; transition: color 0.3s; }
+    .btn::before { content: ''; position: absolute; inset: 0; background: var(--cyan); transform: translateX(-101%); transition: transform 0.3s; }
+    .btn:hover::before { transform: translateX(0); }
+    .btn:hover { color: var(--bg); }
+    .btn-ghost { border-color: var(--muted); color: var(--muted); }
+    .btn-ghost::before { background: var(--muted); }
+    .btn-ghost:hover { color: var(--bg); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .proj-hero { padding: 7rem 1.5rem 3rem; }
+      .proj-body { padding: 3rem 1.5rem; }
+      .gif-row { grid-template-columns: 1fr; }
+      .arch-diagram { grid-template-columns: 1fr; }
+      .contrib-split { grid-template-columns: 1fr; }
+      .sec-table { font-size: 0.65rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="../index.html" class="nav-logo">DD.DEV</a>
+    <a href="../index.html" class="nav-back">All Projects</a>
+  </nav>
+
+  <div class="proj-hero">
+    <p class="proj-num">Project 03 — Multiplayer Game / Networking</p>
+    <h1 class="proj-title">SNOW WAY OUT</h1>
+    <p class="proj-tagline">Server-authoritative multiplayer snowball arena built in Unity with Mirror.</p>
+    <div class="proj-meta">
+      <div class="meta-item">
+        <div class="meta-label">Year</div>
+        <div class="meta-val">2025 – 2026</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Role</div>
+        <div class="meta-val">Networking Engineer</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Team</div>
+        <div class="meta-val">2 Developers</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Engine</div>
+        <div class="meta-val">Unity + Mirror</div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">Status</div>
+        <div class="meta-val" style="color:var(--green);">Complete</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="proj-body">
+
+    <!-- DEMO -->
+    <div class="section-block">
+      <p class="block-label">Demo</p>
+      <h2 class="block-title">See It Running</h2>
+
+      <!-- ▼▼▼ REPLACE WITH YOUR VIDEO ▼▼▼
+           Local MP4:
+             <video autoplay loop muted playsinline style="width:100%;border:1px solid var(--border);">
+               <source src="../assets/videos/snowwayout-demo.mp4" type="video/mp4"/>
+             </video>
+           YouTube:
+             <iframe style="width:100%;aspect-ratio:16/9;border:1px solid var(--border);"
+                     src="https://www.youtube.com/embed/YOUR_ID" allowfullscreen></iframe>
+      -->
+      <div class="video-box">
+        <div class="video-icon">▶</div>
+        <div class="video-label">Drop your demo video here</div>
+      </div>
+
+      <div class="gif-row">
+        <!-- ▼▼▼ REPLACE WITH YOUR GIFS ▼▼▼
+             <img src="../assets/gifs/snowball-throw.gif" style="width:100%;border:1px solid var(--border);"/>
+        -->
+        <div class="gif-box">
+          <div class="video-icon">◈</div>
+          <div class="gif-hint">GIF: Snowball throw + hit</div>
+        </div>
+        <div class="gif-box">
+          <div class="video-icon">◈</div>
+          <div class="gif-hint">GIF: F1 debug menu rejecting an exploit</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="section-block">
+      <p class="block-label">Overview</p>
+      <h2 class="block-title">What Is It?</h2>
+      <p>
+        A competitive real-time multiplayer game built in Unity using the Mirror networking framework.
+        Players move around a shared arena, collect ammo from snow piles, and throw snowballs at each
+        other to reduce their opponent's HP. The project was built for an Online Gaming Technologies
+        module with a focus on demonstrating correct networking architecture.
+      </p>
+      <p>
+        The game uses a fully <strong style="color:var(--text);">server-authoritative model</strong> —
+        the server owns all meaningful game state and clients can only request actions, never set state
+        directly. A debug menu accessible with F1 in-game demonstrates each network exploit being
+        rejected in real time.
+      </p>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section-block">
+      <p class="block-label">Architecture</p>
+      <h2 class="block-title">How It Works</h2>
+      <div class="arch-diagram">
+        <div class="arch-node">
+          <div class="arch-node-label">CLIENT</div>
+          <ul>
+            <li>Reads keyboard input</li>
+            <li>Calls [Command] methods</li>
+            <li>Interpolates remote players</li>
+            <li>Renders local UI</li>
+          </ul>
+        </div>
+        <div class="arch-arrow">
+          <div style="font-size:0.6rem;color:var(--cyan);">CmdThrow / CmdSendMovement</div>
+          <div class="arch-arrow-line"></div>
+          <div style="font-size:0.6rem;color:var(--muted);">SyncVar / ClientRpc</div>
+        </div>
+        <div class="arch-node">
+          <div class="arch-node-label">SERVER</div>
+          <ul>
+            <li>Validates all actions</li>
+            <li>Owns HP, ammo, position</li>
+            <li>Spawns networked objects</li>
+            <li>Applies damage + death</li>
+          </ul>
+        </div>
+      </div>
+      <p>
+        Clients send requests to the server via <strong style="color:var(--text);">[Command]</strong> methods.
+        The server validates and processes them, then broadcasts results back via
+        <strong style="color:var(--text);">[SyncVar]</strong> hooks and
+        <strong style="color:var(--text);">[ClientRpc]</strong> calls.
+        The <code style="color:var(--cyan);font-family:'Share Tech Mono',monospace;">[Server]</code> attribute
+        on TakeDamage means clients physically cannot call it — Mirror silently drops any attempt.
+      </p>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="section-block">
+      <p class="block-label">Technology</p>
+      <h2 class="block-title">Stack</h2>
+      <div class="tech-grid">
+        <div class="tech-item">
+          <div class="tech-name">Unity</div>
+          <div class="tech-desc">Game engine, physics, rendering</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-name">Mirror</div>
+          <div class="tech-desc">Open-source Unity networking</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-name">C#</div>
+          <div class="tech-desc">Core language throughout</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-name">SyncVar</div>
+          <div class="tech-desc">Server-to-client state replication</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-name">ClientRpc</div>
+          <div class="tech-desc">Server broadcast calls</div>
+        </div>
+        <div class="tech-item">
+          <div class="tech-name">TargetRpc</div>
+          <div class="tech-desc">Per-client correction messages</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="section-block">
+      <p class="block-label">Features</p>
+      <h2 class="block-title">What Was Built</h2>
+      <ul class="feature-list">
+        <li>Server-authoritative game loop — HP, ammo, position and death state all owned and validated server-side</li>
+        <li>Threshold-based movement sync that only fires CmdSendMovement when position changes by 0.2+ units, rotation by 5+ degrees, or 100ms has elapsed — eliminating redundant packets</li>
+        <li>Client-side interpolation using exponential decay Lerp/Slerp so remote players move smoothly regardless of frame rate or packet timing</li>
+        <li>Four server-side security patches: teleport rejection with TargetRpc position correction, rapid-fire cooldown, zero-ammo throw prevention, and name-length clamping</li>
+        <li>Full respawn system — server resets state, broadcasts position to all clients, snaps local tracking</li>
+        <li>Snow pile ammo refill via trigger collision, verified server-side with CmdRefillAmmo</li>
+        <li>Death overlay UI driven by RpcOnDeath broadcast, respawn button wired back through CmdRequestRespawn</li>
+        <li>F1 in-game debug menu demonstrating each exploit being rejected with real-time console feedback</li>
+      </ul>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="section-block">
+      <p class="block-label">Security</p>
+      <h2 class="block-title">Exploit Patches</h2>
+      <p>Four vulnerabilities were identified in the original client-server design and patched server-side:</p>
+      <br/>
+      <table class="sec-table">
+        <thead>
+          <tr>
+            <th>Attack</th>
+            <th>Vulnerability</th>
+            <th>Patch</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Teleport cheat</td>
+            <td>CmdSendMovement accepted any position with no range check</td>
+            <td>Server measures distance from last accepted position. Moves beyond the threshold are rejected and the client is snapped back via TargetRpc</td>
+          </tr>
+          <tr>
+            <td>Rapid-fire throw</td>
+            <td>throwCooldown was enforced client-side only — calling CmdThrow directly bypassed it</td>
+            <td>Server maintains _serverNextThrowTime independently. CmdThrow returns early if called before cooldown expires</td>
+          </tr>
+          <tr>
+            <td>Zero-ammo throw</td>
+            <td>Server never checked ammo — a client with 0 ammo could still call CmdThrow</td>
+            <td>Server maintains _serverAmmo separately from the client UI counter. CmdThrow is rejected if _serverAmmo is zero</td>
+          </tr>
+          <tr>
+            <td>Oversized name</td>
+            <td>CmdSetupPlayer accepted strings of any length, wasting bandwidth and breaking UI</td>
+            <td>Name length is clamped server-side in CmdSetupPlayer — oversized names are rejected with a warning logged to the connection</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CONTRIBUTION -->
+    <div class="section-block">
+      <p class="block-label">Contribution</p>
+      <h2 class="block-title">My Role</h2>
+      <div class="contrib-split">
+        <div class="contrib-box mine">
+          <div class="contrib-title">Danny Delaney — Networking</div>
+          <ul>
+            <li>Threshold-based movement sync system</li>
+            <li>SyncVar replication for position and rotation</li>
+            <li>Client-side interpolation with exponential decay</li>
+            <li>All four server-side security patches</li>
+            <li>TargetRpc position correction on exploit rejection</li>
+            <li>Respawn system networking and state reset</li>
+            <li>Technical report documenting the full architecture</li>
+          </ul>
+        </div>
+        <div class="contrib-box partner">
+          <div class="contrib-title" style="color:var(--muted);">Steven Kelly — Gameplay</div>
+          <ul>
+            <li>Core player controller and movement</li>
+            <li>Snowball physics and projectile system</li>
+            <li>HP system and damage handling</li>
+            <li>Snow pile ammo pickups</li>
+            <li>Scene setup and environment</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="proj-cta">
+      <!-- ▼▼▼ UPDATE HREF TO YOUR REPO URL ▼▼▼ -->
+      <a href="https://github.com/Danny-delaney/snow-way-out" target="_blank" class="btn">View Repository</a>
+      <a href="../index.html" class="btn btn-ghost">Back to Portfolio</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
