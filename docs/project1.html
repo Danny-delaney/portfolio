@@ -1,368 +1,367 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Desktop Platformer Engine — Danny Delaney</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #020408; --surface: #060d14; --cyan: #00f5ff;
-      --green: #00ff88; --red: #ff003c; --border: rgba(0,245,255,0.15);
-      --text: #c8e6f0; --muted: #3a5a6a;
-    }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: var(--bg); color: var(--text);
-      font-family: 'DM Sans', sans-serif; font-weight: 300;
-      overflow-x: hidden; cursor: crosshair;
-    }
-    body::before {
-      content: ''; position: fixed; inset: 0;
-      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.08) 2px, rgba(0,0,0,0.08) 4px);
-      pointer-events: none; z-index: 9999;
-    }
-    body::after {
-      content: ''; position: fixed; inset: 0;
-      background-image: linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
-      background-size: 40px 40px; pointer-events: none; z-index: 0;
-    }
-    nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 1.2rem 3rem; border-bottom: 1px solid var(--border);
-      background: rgba(2,4,8,0.85); backdrop-filter: blur(12px);
-    }
-    .nav-logo { font-family: 'Orbitron', monospace; font-weight: 900; font-size: 1rem; color: var(--cyan); letter-spacing: 0.15em; text-decoration: none; }
-    .nav-back { font-family: 'Share Tech Mono', monospace; font-size: 0.75rem; color: var(--muted); text-decoration: none; letter-spacing: 0.2em; text-transform: uppercase; transition: color 0.2s; }
-    .nav-back:hover { color: var(--cyan); }
-    .nav-back::before { content: '← '; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Desktop Platformer Engine — Danny Delaney</title>
+<style>
+  :root{
+    --luna1:#0A6CDA; --luna2:#0A58C2; --luna3:#1E90FF; --luna4:#0A246A;
+    --silver:#ECE9D8; --silver-dk:#D4D0C8; --silver-line:#919B9C;
+    --hot:#316AC5; --taskbar1:#245EDC; --taskbar2:#0F3FC7; --start1:#5CB85C; --start2:#1F6B1F;
+    --ink:#111318; --dim:#3d4147; --danger:#C34632;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Tahoma','Segoe UI','Trebuchet MS',sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    padding-bottom:52px; /* space for taskbar */
+    background:
+      radial-gradient(ellipse 90% 60% at 50% 0%, #dff0ff 0%, #7fb8ea 45%, #3a7bc8 100%) fixed;
+    position:relative;
+    overflow-x:hidden;
+  }
+  /* rolling hill */
+  body::before{
+    content:'';position:fixed;left:0;right:0;bottom:52px;height:38vh;z-index:0;
+    background:
+      radial-gradient(ellipse 70% 100% at 30% 100%, #8fd45a 0%, #5fa838 55%, transparent 75%),
+      radial-gradient(ellipse 80% 100% at 80% 100%, #79c94c 0%, #4f8f2f 60%, transparent 80%),
+      linear-gradient(#5fa838,#3f7a24);
+  }
+  a{color:inherit;text-decoration:none;}
 
-    /* HERO */
-    .proj-hero {
-      position: relative; z-index: 1;
-      min-height: 60vh; display: flex; flex-direction: column;
-      justify-content: flex-end; padding: 8rem 3rem 4rem;
-      border-bottom: 1px solid var(--border);
-    }
-    .proj-num {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
-      color: var(--green); letter-spacing: 0.35em; text-transform: uppercase;
-      margin-bottom: 1rem; opacity: 0;
-      animation: fadeUp 0.5s 0.2s forwards;
-    }
-    .proj-num::before { content: '> '; }
-    .proj-title {
-      font-family: 'Orbitron', monospace; font-weight: 900;
-      font-size: clamp(2rem, 7vw, 5.5rem); line-height: 0.95; color: #fff;
-      opacity: 0; animation: fadeUp 0.5s 0.35s forwards;
-    }
-    .proj-tagline {
-      font-family: 'Share Tech Mono', monospace; font-size: 1rem;
-      color: var(--cyan); margin-top: 1.25rem; letter-spacing: 0.08em;
-      opacity: 0; animation: fadeUp 0.5s 0.5s forwards;
-    }
-    .proj-meta {
-      display: flex; flex-wrap: wrap; gap: 2rem; margin-top: 2rem;
-      opacity: 0; animation: fadeUp 0.5s 0.65s forwards;
-    }
-    .meta-label {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
-      color: var(--muted); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.3rem;
-    }
-    .meta-val {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.82rem;
-      color: var(--text);
-    }
+  /* ── XP WINDOW COMPONENT ── */
+  .xp-window{
+    position:relative;z-index:1;
+    background:var(--silver);
+    border:1px solid var(--luna4);
+    box-shadow:3px 3px 10px rgba(0,0,0,.45);
+    margin:0 auto 2.25rem;
+    max-width:840px;
+    border-radius:8px 8px 3px 3px;
+    overflow:hidden;
+  }
+  .xp-titlebar{
+    height:30px;
+    background:linear-gradient(180deg,#2A8AF0 0%,#0A58C2 6%,#1E7CE8 45%,#0A58C2 92%,#0A246A 100%);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 3px 0 8px;
+  }
+  .xp-titlebar .title{
+    color:#fff;font-weight:bold;font-size:.78rem;
+    display:flex;align-items:center;gap:6px;
+    text-shadow:1px 1px 1px rgba(0,0,0,.55);
+    letter-spacing:.01em;
+  }
+  .xp-titlebar .title .ico{font-size:.85rem;}
+  .xp-controls{display:flex;gap:2px;}
+  .xp-ctrl{
+    width:20px;height:19px;border-radius:2px;
+    background:linear-gradient(#fff,#cfd3d6);
+    border:1px solid #6b6f76;
+    font-size:.62rem;font-weight:bold;color:#222;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .xp-ctrl.close{background:linear-gradient(#f0a89c,#c34632);color:#fff;border-color:#7a1f10;}
+  .xp-body{padding:1.4rem 1.6rem;}
 
-    /* BODY */
-    .proj-body { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 5rem 3rem; }
+  /* fieldset-style group */
+  .xp-group{
+    border:1px solid var(--silver-line);border-radius:3px;
+    padding:1rem 1rem .9rem;margin-top:1.1rem;position:relative;background:#F5F3EA;
+  }
+  .xp-group-label{
+    position:absolute;top:-.65rem;left:.7rem;background:var(--silver);
+    padding:0 .4rem;font-size:.68rem;font-weight:bold;color:var(--luna4);letter-spacing:.02em;
+  }
 
-    .section-block { margin-bottom: 4rem; }
-    .block-label {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-      letter-spacing: 0.4em; text-transform: uppercase; color: var(--green);
-      margin-bottom: 0.6rem;
-    }
-    .block-label::before { content: '// '; }
-    .block-title {
-      font-family: 'Orbitron', monospace; font-size: 1.3rem;
-      font-weight: 700; color: #fff; margin-bottom: 1.25rem;
-    }
-    p { font-size: 0.95rem; color: var(--muted); line-height: 1.85; margin-bottom: 1rem; }
+  /* PROPERTY ROWS in hero window */
+  .prop-row{display:flex;gap:.5rem;font-size:.78rem;padding:.25rem 0;}
+  .prop-row b{width:82px;color:var(--luna4);flex-shrink:0;}
+  .prop-row span{color:var(--dim);}
 
-    /* VIDEO PLACEHOLDER */
-    .video-box {
-      width: 100%; aspect-ratio: 16/9;
-      border: 1px solid var(--border); background: var(--surface);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 1rem; margin-bottom: 0.75rem; position: relative; overflow: hidden;
-    }
-    .video-box::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(0,245,255,0.04) 0%, transparent 60%);
-    }
-    .video-icon {
-      font-size: 3rem; opacity: 0.3;
-    }
-    .video-label {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.7rem;
-      color: var(--muted); letter-spacing: 0.25em; text-transform: uppercase;
-    }
-    /* Use this class when you drop in a real video: */
-    /* .video-box video { width:100%; height:100%; object-fit:cover; } */
+  /* HERO SPECIFIC */
+  .hero-shell{padding-top:5.5rem;}
+  .app-title{
+    font-size:clamp(1.5rem,5vw,2.4rem);font-weight:bold;color:var(--luna4);
+    text-shadow:1px 1px 0 #fff;line-height:1.25;margin-bottom:.4rem;
+  }
+  .app-tagline{font-size:.92rem;color:var(--dim);font-style:italic;margin-bottom:.5rem;}
 
-    /* GIF PLACEHOLDER */
-    .gif-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem; }
-    .gif-box {
-      aspect-ratio: 4/3; border: 1px solid var(--border); background: var(--surface);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 0.5rem;
-    }
-    .gif-box .video-icon { font-size: 2rem; }
-    .gif-hint {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.6rem;
-      color: var(--muted); letter-spacing: 0.15em; text-align: center; padding: 0 1rem;
-    }
+  /* NOTEPAD BODY */
+  .notepad-body{
+    background:#fff;border:1px solid #8a8a8a;padding:1.1rem 1.25rem;
+    font-family:'Courier New',monospace;font-size:.85rem;line-height:1.75;color:#111;
+  }
+  .notepad-body p{margin-bottom:.9rem;}
+  .notepad-body strong{color:var(--luna4);}
 
-    /* TECH STACK */
-    .tech-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1rem;
-    }
-    .tech-item {
-      border: 1px solid var(--border); background: var(--surface);
-      padding: 1rem 1.25rem; position: relative; overflow: hidden;
-    }
-    .tech-item::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 3px; height: 100%; background: var(--cyan);
-    }
-    .tech-name {
-      font-family: 'Orbitron', monospace; font-size: 0.75rem;
-      font-weight: 700; color: #fff; margin-bottom: 0.3rem;
-    }
-    .tech-desc {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.65rem;
-      color: var(--muted); letter-spacing: 0.05em;
-    }
+  /* DRIVE LIST (tech stack) */
+  .drive-list{display:flex;flex-direction:column;}
+  .drive-row{
+    display:flex;align-items:center;gap:.9rem;padding:.65rem .5rem;border-bottom:1px solid #d8d5c8;
+  }
+  .drive-row:last-child{border-bottom:none;}
+  .drive-icon{
+    width:34px;height:28px;border-radius:2px;flex-shrink:0;
+    background:linear-gradient(180deg,#bcd8f5,#6fa3d6);
+    border:1px solid #3a6ea5;display:flex;align-items:center;justify-content:center;font-size:.9rem;
+  }
+  .drive-name{font-weight:bold;font-size:.82rem;color:var(--ink);}
+  .drive-desc{font-size:.74rem;color:var(--dim);}
 
-    /* FEATURE LIST */
-    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
-    .feature-list li {
-      font-size: 0.92rem; color: var(--muted); line-height: 1.6;
-      padding-left: 1.5rem; position: relative;
-    }
-    .feature-list li::before {
-      content: '▸'; position: absolute; left: 0;
-      color: var(--cyan); font-size: 0.8rem;
-    }
+  /* EXPLORER FILE LIST (achievements) */
+  .file-list{display:flex;flex-direction:column;}
+  .file-row{
+    display:flex;align-items:flex-start;gap:.7rem;padding:.55rem .3rem;
+    border-bottom:1px dotted #c9c5b6;font-size:.82rem;color:var(--ink);line-height:1.55;
+  }
+  .file-row:last-child{border-bottom:none;}
+  .file-check{
+    width:16px;height:16px;flex-shrink:0;margin-top:.15rem;
+    background:linear-gradient(#8fd45a,#4f8f2f);border:1px solid #2f5f1c;border-radius:2px;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:.6rem;font-weight:bold;
+  }
 
-    /* CONTRIBUTION BLOCK */
-    .contrib-box {
-      border: 1px solid var(--border); background: var(--surface);
-      padding: 2rem; position: relative;
-    }
-    .contrib-box::before {
-      content: ''; position: absolute; top: 0; left: 0;
-      width: 100%; height: 3px; background: linear-gradient(90deg, var(--cyan), var(--green));
-    }
+  /* ERROR DIALOG (boss fight) */
+  .xp-window.error .xp-titlebar{background:linear-gradient(180deg,#f0a89c 0%,#c34632 6%,#e0725f 45%,#c34632 92%,#7a1f10 100%);}
+  .error-content{display:flex;gap:1rem;align-items:flex-start;}
+  .error-icon{
+    width:42px;height:42px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffef8a,#e8b400 70%,#a97600);
+    display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#3a2a00;font-weight:bold;
+    box-shadow:1px 1px 3px rgba(0,0,0,.4);flex-shrink:0;
+  }
+  .error-text{font-size:.85rem;line-height:1.7;color:var(--ink);}
+  .error-text b{display:block;margin-bottom:.4rem;color:var(--danger);font-size:.86rem;}
 
-    /* CTA */
-    .proj-cta {
-      display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 3rem;
-      padding-top: 3rem; border-top: 1px solid var(--border);
-    }
-    .btn {
-      font-family: 'Share Tech Mono', monospace; font-size: 0.75rem;
-      letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none;
-      padding: 0.75rem 2rem; border: 1px solid var(--cyan); color: var(--cyan);
-      background: transparent; cursor: pointer; position: relative; overflow: hidden; transition: color 0.3s;
-    }
-    .btn::before {
-      content: ''; position: absolute; inset: 0; background: var(--cyan);
-      transform: translateX(-101%); transition: transform 0.3s;
-    }
-    .btn:hover::before { transform: translateX(0); }
-    .btn:hover { color: var(--bg); }
-    .btn-ghost { border-color: var(--muted); color: var(--muted); }
-    .btn-ghost::before { background: var(--muted); }
-    .btn-ghost:hover { color: var(--bg); }
+  /* PROPERTIES TABS (contribution) */
+  .tabs{display:flex;gap:2px;margin-bottom:-1px;position:relative;z-index:2;}
+  .tab{
+    padding:.4rem 1rem;font-size:.74rem;background:var(--silver-dk);
+    border:1px solid var(--silver-line);border-bottom:none;border-radius:4px 4px 0 0;color:var(--dim);
+  }
+  .tab.active{background:#F5F3EA;color:var(--ink);font-weight:bold;}
+  .tab-panel{
+    border:1px solid var(--silver-line);background:#F5F3EA;padding:1.1rem 1.2rem;
+    font-size:.85rem;line-height:1.8;color:var(--ink);position:relative;z-index:1;
+  }
 
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .proj-hero { padding: 7rem 1.5rem 3rem; }
-      .proj-body { padding: 3rem 1.5rem; }
-      .gif-row { grid-template-columns: 1fr; }
-    }
-  </style>
+  /* XP BUTTONS */
+  .xp-btn{
+    font-family:'Tahoma',sans-serif;font-size:.78rem;color:var(--ink);
+    background:linear-gradient(180deg,#fff,#e2e2e2 45%,#cfcfcf);
+    border:1px solid #6b6f76;border-radius:3px;
+    padding:.55rem 1.4rem;cursor:pointer;
+    box-shadow:0 1px 0 rgba(255,255,255,.6) inset;
+    display:inline-flex;align-items:center;gap:.4rem;
+  }
+  .xp-btn:hover{border-color:var(--hot);background:linear-gradient(180deg,#fff,#dbeafe 45%,#bcd8f5);}
+  .xp-btn.primary{font-weight:bold;}
+  .dialog-buttons{display:flex;gap:.8rem;justify-content:flex-end;padding:1rem 1.6rem 1.4rem;}
+
+  /* ── TASKBAR (site nav) ── */
+  .taskbar{
+    position:fixed;bottom:0;left:0;right:0;height:44px;z-index:100;
+    background:linear-gradient(180deg,#3a93ff 0%,var(--taskbar1) 8%,var(--taskbar2) 92%,#0A246A 100%);
+    display:flex;align-items:center;gap:.6rem;padding:0 .4rem;
+    box-shadow:0 -1px 0 rgba(255,255,255,.25) inset;
+  }
+  .start-btn{
+    display:flex;align-items:center;gap:.4rem;height:32px;padding:0 1rem 0 .5rem;
+    background:linear-gradient(180deg,#7ED957,var(--start1) 40%,var(--start2));
+    border-radius:6px 12px 12px 6px;border:1px solid #1c4a12;
+    font-weight:bold;font-style:italic;font-size:.92rem;color:#fff;text-shadow:1px 1px 1px rgba(0,0,0,.4);
+  }
+  .start-flag{width:16px;height:16px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1px;}
+  .start-flag i{display:block;}
+  .start-flag i:nth-child(1){background:#f25022;} .start-flag i:nth-child(2){background:#7fba00;}
+  .start-flag i:nth-child(3){background:#00a4ef;} .start-flag i:nth-child(4){background:#ffb900;}
+  .taskbar-sep{width:1px;height:26px;background:rgba(255,255,255,.25);}
+  .task-pill{
+    height:32px;display:flex;align-items:center;gap:.5rem;padding:0 .9rem;
+    background:linear-gradient(180deg,#5296e5,#1c5fb0);border:1px solid #0b3a80;border-radius:4px;
+    font-size:.78rem;color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3) inset;
+  }
+  .taskbar-spacer{flex:1;}
+  .systray{
+    height:32px;display:flex;align-items:center;gap:.6rem;padding:0 .9rem;
+    background:linear-gradient(180deg,#1c4faa,#0e3a8f);border-radius:4px 0 0 4px;
+    font-size:.76rem;color:#eaf2ff;border-left:1px solid #0b3a80;
+  }
+
+  @media (max-width:640px){
+    .xp-window{margin-left:.7rem;margin-right:.7rem;}
+    .xp-body{padding:1.1rem 1.1rem;}
+    .prop-row b{width:70px;}
+    .hero-shell{padding-top:3.5rem;}
+    .start-btn span.label{display:none;}
+    .drive-row{flex-wrap:wrap;}
+  }
+</style>
 </head>
 <body>
 
-  <nav>
-    <a href="../index.html" class="nav-logo">DD.DEV</a>
-    <a href="../index.html" class="nav-back">All Projects</a>
-  </nav>
-
-  <div class="proj-hero">
-    <p class="proj-num">Project 01 — Networked System / Game Engine</p>
-    <h1 class="proj-title">DESKTOP PLATFORMER ENGINE</h1>
-    <p class="proj-tagline">Your open windows are the platforms. Your desktop is the level.</p>
-    <div class="proj-meta">
-      <div class="meta-item">
-        <div class="meta-label">Year</div>
-        <div class="meta-val">2024 – 2025</div>
+<div class="hero-shell">
+  <div class="xp-window">
+    <div class="xp-titlebar">
+      <span class="title"><span class="ico">🖥️</span> DesktopPlatformerEngine.exe — Properties</span>
+      <div class="xp-controls">
+        <div class="xp-ctrl">_</div><div class="xp-ctrl">□</div><div class="xp-ctrl close">✕</div>
       </div>
-      <div class="meta-item">
-        <div class="meta-label">Role</div>
-        <div class="meta-val">Sole Developer</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">Platform</div>
-        <div class="meta-val">Windows</div>
-      </div>
-      <div class="meta-item">
-        <div class="meta-label">Status</div>
-        <div class="meta-val" style="color:var(--green);">Complete</div>
+    </div>
+    <div class="xp-body">
+      <p class="app-title">Desktop Platformer Engine</p>
+      <p class="app-tagline">"Your open windows are the platforms. Your desktop is the level."</p>
+      <div class="xp-group">
+        <span class="xp-group-label">Properties</span>
+        <div class="prop-row"><b>Level</b><span>1-1 — Networked System / Game Engine</span></div>
+        <div class="prop-row"><b>Year</b><span>2024 – 2025</span></div>
+        <div class="prop-row"><b>Role</b><span>Sole Developer</span></div>
+        <div class="prop-row"><b>Platform</b><span>Windows</span></div>
+        <div class="prop-row"><b>Status</b><span style="color:#2f7a1f;font-weight:bold;">● Complete</span></div>
       </div>
     </div>
   </div>
 
-  <div class="proj-body">
-
-    <!-- DEMO VIDEO -->
-    <div class="section-block">
-      <p class="block-label">Demo</p>
-      <h2 class="block-title">See It Running</h2>
-
-      <!-- ▼▼▼ REPLACE THIS WITH YOUR VIDEO ▼▼▼
-           Drop your .mp4 into assets/videos/ and swap in:
-           <video autoplay loop muted playsinline style="width:100%;border:1px solid var(--border);">
-             <source src="../assets/videos/platformer-demo.mp4" type="video/mp4"/>
-           </video>
-           Or for a YouTube embed:
-           <iframe style="width:100%;aspect-ratio:16/9;border:1px solid var(--border);" src="https://www.youtube.com/embed/YOUR_ID" allowfullscreen></iframe>
-      -->
-      <div class="video-box">
-        <div class="video-icon">▶</div>
-        <div class="video-label">Drop your demo video here</div>
-      </div>
-
-      <div class="gif-row">
-        <!-- ▼▼▼ REPLACE THESE WITH YOUR GIFS ▼▼▼
-             <img src="../assets/gifs/platformer-run.gif" style="width:100%;border:1px solid var(--border);"/>
-        -->
-        <div class="gif-box">
-          <div class="video-icon">◈</div>
-          <div class="gif-hint">GIF: Character running across windows</div>
-        </div>
-        <div class="gif-box">
-          <div class="video-icon">◈</div>
-          <div class="gif-hint">GIF: Entering a window / punch interaction</div>
-        </div>
+  <div class="xp-window">
+    <div class="xp-titlebar">
+      <span class="title"><span class="ico">📄</span> readme.txt — Notepad</span>
+      <div class="xp-controls">
+        <div class="xp-ctrl">_</div><div class="xp-ctrl">□</div><div class="xp-ctrl close">✕</div>
       </div>
     </div>
-
-    <!-- OVERVIEW -->
-    <div class="section-block">
-      <p class="block-label">Overview</p>
-      <h2 class="block-title">What Is It?</h2>
-      <p>
-        A real-time networked platformer where an animated stickman character runs, jumps and
-        punches across your actual desktop — using every open application window as a platform.
-        The game state lives on a <strong style="color:var(--text);">sender machine</strong> and streams
-        compressed video to a <strong style="color:var(--text);">receiver</strong> over TCP,
-        which can be on the same PC or across a local network.
-      </p>
-      <p>
-        The receiver sends WASD / Space control inputs back, letting you play the game
-        remotely while watching a live compressed stream of the sender's screen.
-      </p>
-    </div>
-
-    <!-- TECH STACK -->
-    <div class="section-block">
-      <p class="block-label">Technology</p>
-      <h2 class="block-title">Stack</h2>
-      <div class="tech-grid">
-        <div class="tech-item">
-          <div class="tech-name">Python</div>
-          <div class="tech-desc">Core language throughout</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">PyQt5</div>
-          <div class="tech-desc">Transparent overlay, sprite renderer</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">OpenCV</div>
-          <div class="tech-desc">JPEG encoding, frame diffing</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">dxcam</div>
-          <div class="tech-desc">High-speed DirectX screen capture</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">Win32 API</div>
-          <div class="tech-desc">Window enumeration, z-ordering</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">TCP Sockets</div>
-          <div class="tech-desc">Custom binary video + control protocol</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">pynput</div>
-          <div class="tech-desc">Global keyboard listener</div>
-        </div>
-        <div class="tech-item">
-          <div class="tech-name">YAML</div>
-          <div class="tech-desc">Level / layout configuration</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FEATURES -->
-    <div class="section-block">
-      <p class="block-label">Features</p>
-      <h2 class="block-title">What I Built</h2>
-      <ul class="feature-list">
-        <li>Custom TCP binary protocol streaming JPEG keyframes and delta patches at up to 18 FPS</li>
-        <li>Frame-differencing algorithm that only sends changed screen regions, reducing bandwidth by up to 80%</li>
-        <li>Transparent PyQt5 overlay rendered fullscreen above all other windows with click-through mouse events</li>
-        <li>Win32 window enumeration to detect all visible application windows and use them as collidable platforms</li>
-        <li>Full sprite animation system with state machine: idle, run, jump up/down, punch — all sprite-sheet sliced</li>
-        <li>Physics engine with gravity, wall jumping, and collision detection against dynamic window positions</li>
-        <li>"Enter window" mechanic — character can descend into a window and interact with its content</li>
-        <li>Left-click injection into Notepad via Win32 messages when the character punches inside it</li>
-        <li>YAML-driven level layout manager that repositions real application windows to form designed levels</li>
-        <li>Dot/collectible system with score counter rendered live on the overlay</li>
-      </ul>
-    </div>
-
-    <!-- MY CONTRIBUTION -->
-    <div class="section-block">
-      <p class="block-label">Contribution</p>
-      <h2 class="block-title">My Role</h2>
-      <div class="contrib-box">
-        <p style="margin-bottom:0;">
-          Sole developer on this project — designed and implemented every system from the networking
-          layer through to the physics engine, sprite animation, Win32 integration and level tooling.
-          All commits in this repository are mine.
+    <div class="xp-body" style="padding:0;">
+      <div class="notepad-body">
+        <p>
+          A real-time networked platformer where an animated stickman character runs, jumps and
+          punches across your actual desktop — using every open application window as a platform.
+          The game state lives on a <strong>sender machine</strong> and streams compressed video
+          to a <strong>receiver</strong> over TCP, which can be on the same PC or across a local
+          network.
+        </p>
+        <p>
+          The receiver sends WASD / Space control inputs back, letting you play the game
+          remotely while watching a live compressed stream of the sender's screen.
         </p>
       </div>
     </div>
-
-    <!-- CTA -->
-    <div class="proj-cta">
-      <a href="https://github.com/Danny-delaney/Stickman-Virus" target="_blank" class="btn">View Repository</a>
-      <a href="index.html" class="btn btn-ghost">Back to Portfolio</a>
-    </div>
-
   </div>
+
+  <div class="xp-window">
+    <div class="xp-titlebar">
+      <span class="title"><span class="ico">💻</span> My Computer</span>
+      <div class="xp-controls">
+        <div class="xp-ctrl">_</div><div class="xp-ctrl">□</div><div class="xp-ctrl close">✕</div>
+      </div>
+    </div>
+    <div class="xp-body">
+      <div class="drive-list">
+        <div class="drive-row"><div class="drive-icon">🐍</div><div><div class="drive-name">Python (C:)</div><div class="drive-desc">Core language throughout</div></div></div>
+        <div class="drive-row"><div class="drive-icon">🪟</div><div><div class="drive-name">PyQt5 (D:)</div><div class="drive-desc">Transparent overlay, sprite renderer</div></div></div>
+        <div class="drive-row"><div class="drive-icon">📷</div><div><div class="drive-name">OpenCV (E:)</div><div class="drive-desc">JPEG encoding, frame diffing</div></div></div>
+        <div class="drive-row"><div class="drive-icon">⚡</div><div><div class="drive-name">dxcam (F:)</div><div class="drive-desc">High-speed DirectX screen capture</div></div></div>
+        <div class="drive-row"><div class="drive-icon">🔧</div><div><div class="drive-name">Win32 API (G:)</div><div class="drive-desc">Window enumeration, z-ordering</div></div></div>
+        <div class="drive-row"><div class="drive-icon">🔌</div><div><div class="drive-name">TCP Sockets (H:)</div><div class="drive-desc">Custom binary video + control protocol</div></div></div>
+        <div class="drive-row"><div class="drive-icon">⌨️</div><div><div class="drive-name">pynput (I:)</div><div class="drive-desc">Global keyboard listener</div></div></div>
+        <div class="drive-row"><div class="drive-icon">📋</div><div><div class="drive-name">YAML (J:)</div><div class="drive-desc">Level / layout configuration</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="xp-window">
+    <div class="xp-titlebar">
+      <span class="title"><span class="ico">📁</span> Windows Explorer — Features</span>
+      <div class="xp-controls">
+        <div class="xp-ctrl">_</div><div class="xp-ctrl">□</div><div class="xp-ctrl close">✕</div>
+      </div>
+    </div>
+    <div class="xp-body">
+      <div class="file-list">
+        <div class="file-row"><span class="file-check">✔</span>Custom TCP binary protocol streaming JPEG keyframes and delta patches at up to 18 FPS</div>
+        <div class="file-row"><span class="file-check">✔</span>Frame-differencing algorithm that only sends changed screen regions, reducing bandwidth by up to 80%</div>
+        <div class="file-row"><span class="file-check">✔</span>Transparent PyQt5 overlay rendered fullscreen above all other windows with click-through mouse events</div>
+        <div class="file-row"><span class="file-check">✔</span>Win32 window enumeration to detect all visible application windows and use them as collidable platforms</div>
+        <div class="file-row"><span class="file-check">✔</span>Full sprite animation system with state machine: idle, run, jump up/down, punch — all sprite-sheet sliced</div>
+        <div class="file-row"><span class="file-check">✔</span>Physics engine with gravity, wall jumping, and collision detection against dynamic window positions</div>
+        <div class="file-row"><span class="file-check">✔</span>"Enter window" mechanic — character can descend into a window and interact with its content</div>
+        <div class="file-row"><span class="file-check">✔</span>Left-click injection into Notepad via Win32 messages when the character punches inside it</div>
+        <div class="file-row"><span class="file-check">✔</span>YAML-driven level layout manager that repositions real application windows to form designed levels</div>
+        <div class="file-row"><span class="file-check">✔</span>Dot/collectible system with score counter rendered live on the overlay</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="xp-window error">
+    <div class="xp-titlebar">
+      <span class="title"><span class="ico">⚠️</span> DesktopPlatformerEngine.exe</span>
+      <div class="xp-controls"><div class="xp-ctrl close">✕</div></div>
+    </div>
+    <div class="xp-body">
+      <div class="error-content">
+        <div class="error-icon">!</div>
+        <div class="error-text">
+          <b>The hardest part: streaming a desktop without lagging it</b>
+          Sending a full-resolution screen over TCP at a playable frame rate was the real fight.
+          Naive full-frame capture choked the network almost immediately, so the fix was a
+          frame-differencing pipeline that only transmits the regions of the screen that actually
+          changed between frames — cutting bandwidth by up to 80% and keeping the game responsive
+          even under load.
+        </div>
+      </div>
+    </div>
+    <div class="dialog-buttons"><button class="xp-btn primary">OK</button></div>
+  </div>
+
+  <div class="xp-window">
+    <div class="xp-titlebar">
+      <span class="title"><span class="ico">📇</span> Contributor Properties</span>
+      <div class="xp-controls">
+        <div class="xp-ctrl">_</div><div class="xp-ctrl">□</div><div class="xp-ctrl close">✕</div>
+      </div>
+    </div>
+    <div class="xp-body">
+      <div class="tabs">
+        <div class="tab active">General</div>
+        <div class="tab">Details</div>
+        <div class="tab">Security</div>
+      </div>
+      <div class="tab-panel">
+        Solo run — designed and implemented every system from the networking layer through
+        to the physics engine, sprite animation, Win32 integration and level tooling. All
+        commits in this repository are mine.
+      </div>
+    </div>
+    <div class="dialog-buttons">
+      <a href="https://github.com/Danny-delaney/Stickman-Virus" target="_blank" class="xp-btn primary">📂 View Repository</a>
+      <a href="index.html" class="xp-btn">◀ Back to Level Select</a>
+    </div>
+  </div>
+</div>
+
+<div class="taskbar">
+  <a href="index.html" class="start-btn">
+    <span class="start-flag"><i></i><i></i><i></i><i></i></span>
+    <span class="label">start</span>
+  </a>
+  <div class="taskbar-sep"></div>
+  <div class="task-pill">🖥️ Desktop Platformer Engine</div>
+  <div class="taskbar-spacer"></div>
+  <div class="systray">🔊 &nbsp; <span id="xpClock">3:47 PM</span></div>
+</div>
+
+<script>
+  function updateClock(){
+    var d=new Date(); var h=d.getHours()%12; if(h===0)h=12;
+    var m=String(d.getMinutes()).padStart(2,'0');
+    var ap=d.getHours()>=12?'PM':'AM';
+    var el=document.getElementById('xpClock');
+    if(el) el.textContent=h+':'+m+' '+ap;
+  }
+  updateClock(); setInterval(updateClock,1000*30);
+</script>
 
 </body>
 </html>

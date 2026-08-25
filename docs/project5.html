@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bronze Age Brawl — Danny Delaney</title>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Yeseva+One&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root{
+    --cave:#241a12; --cave2:#2e2117; --stone:#4a3a2c; --stone-lt:#6b5540;
+    --bone:#e9dcbe; --fire:#e0722c; --fire2:#f2a33c; --moss:#7a8450; --blood:#8c3a2b; --dim:#b3a488;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Work Sans',sans-serif;color:var(--bone);
+    background:
+      radial-gradient(circle at 20% 10%, rgba(224,114,44,.10), transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(122,132,80,.08), transparent 45%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.15) 0, rgba(0,0,0,.15) 1px, transparent 2px, transparent 40px),
+      linear-gradient(160deg,#241a12 0%, #2e2117 55%, #201712 100%);
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none;}
+  .disp{font-family:'Bungee',sans-serif;}
+
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.1rem 2.5rem;background:rgba(24,17,11,.9);border-bottom:3px solid var(--stone);
+    backdrop-filter:blur(6px);
+  }
+  .nav-logo{font-family:'Bungee',sans-serif;font-size:.85rem;color:var(--fire2);letter-spacing:.02em;}
+  .nav-back{font-size:.75rem;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;font-weight:600;transition:color .15s;}
+  .nav-back:hover{color:var(--fire2);}
+  .nav-back::before{content:'🦴 ';}
+
+  main{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:7.5rem 2rem 4rem;}
+
+  /* HERO */
+  .hero-tag{
+    font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:var(--fire2);margin-bottom:1.1rem;font-weight:600;
+  }
+  .hero-tag::before{content:'🔥 ';}
+  .hero-title{
+    font-family:'Bungee',sans-serif;font-size:clamp(1.8rem,7vw,3.6rem);line-height:1.05;color:var(--bone);
+    text-shadow:3px 3px 0 var(--blood), 6px 6px 0 rgba(0,0,0,.5);
+  }
+  .hero-tagline{font-size:1rem;color:var(--dim);margin-top:1.3rem;max-width:540px;line-height:1.8;}
+
+  .award-strip{
+    margin-top:2rem;display:flex;align-items:center;gap:1rem;
+    background:linear-gradient(145deg, rgba(224,114,44,.14), rgba(140,58,43,.1));
+    border:2px solid var(--fire);border-radius:6px;padding:1rem 1.4rem;
+  }
+  .medal{
+    width:52px;height:52px;border-radius:50%;flex-shrink:0;
+    background:radial-gradient(circle at 35% 30%, #e8a466, #b5651d 65%, #7a4413);
+    display:flex;align-items:center;justify-content:center;font-size:1.5rem;
+    box-shadow:0 3px 8px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.3);
+  }
+  .award-text b{display:block;font-family:'Yeseva One',serif;font-size:1rem;color:var(--fire2);}
+  .award-text span{font-size:.78rem;color:var(--dim);}
+
+  .stat-row{display:flex;flex-wrap:wrap;gap:1.5rem 2.2rem;margin-top:2rem;}
+  .stat-chip{border-left:3px solid var(--fire);padding-left:.8rem;}
+  .stat-label{font-size:.62rem;color:var(--dim);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.25rem;}
+  .stat-val{font-family:'Work Sans',sans-serif;font-weight:700;font-size:.86rem;color:var(--bone);}
+
+  /* STONE TABLET PANEL */
+  .tablet{
+    position:relative;background:linear-gradient(160deg,var(--stone),var(--cave2));
+    border:2px solid #1a120c;
+    padding:2rem 2.2rem;margin:3rem 0;
+    clip-path:polygon(0% 2%, 1.5% 0%, 98% 0%, 100% 3%, 100% 97%, 98.5% 100%, 2% 100%, 0% 98%);
+    box-shadow:0 10px 26px rgba(0,0,0,.45);
+  }
+  .tablet::before{
+    content:'';position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(circle at 15% 25%, rgba(255,255,255,.04) 0, transparent 3px),
+      radial-gradient(circle at 70% 60%, rgba(0,0,0,.25) 0, transparent 4px),
+      radial-gradient(circle at 40% 85%, rgba(255,255,255,.03) 0, transparent 3px),
+      radial-gradient(circle at 90% 20%, rgba(0,0,0,.2) 0, transparent 3px);
+  }
+  .tablet-eyebrow{font-size:.68rem;letter-spacing:.25em;text-transform:uppercase;color:var(--fire2);margin-bottom:.6rem;font-weight:600;}
+  .tablet-title{font-family:'Yeseva One',serif;font-size:1.4rem;color:var(--bone);margin-bottom:1.1rem;}
+  p.body-text{font-size:.95rem;color:var(--dim);line-height:1.9;margin-bottom:1rem;}
+  p.body-text strong{color:var(--fire2);}
+
+  /* LOADOUT */
+  .loadout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1rem;position:relative;z-index:1;}
+  .loadout-item{
+    background:rgba(0,0,0,.22);border:1px solid #59452f;padding:1rem 1.1rem;
+  }
+  .loadout-name{font-family:'Work Sans',sans-serif;font-weight:700;font-size:.8rem;color:var(--fire2);margin-bottom:.35rem;}
+  .loadout-desc{font-size:.72rem;color:var(--dim);line-height:1.5;}
+
+  /* ACHIEVEMENTS */
+  .achv-list{list-style:none;display:flex;flex-direction:column;gap:.9rem;position:relative;z-index:1;}
+  .achv-list li{font-size:.92rem;color:var(--dim);line-height:1.65;padding-left:1.8rem;position:relative;}
+  .achv-list li::before{content:'🦴';position:absolute;left:0;font-size:.85rem;}
+
+  /* BOSS FIGHT */
+  .boss-tablet{border-color:var(--blood);}
+  .boss-label{
+    font-family:'Bungee',sans-serif;font-size:.68rem;color:var(--blood);letter-spacing:.05em;margin-bottom:1rem;
+    display:flex;align-items:center;gap:.5rem;
+  }
+  .boss-label::before{content:'⚔️';}
+
+  /* CONTRIBUTION */
+  .role-line{font-size:.94rem;color:var(--dim);line-height:1.9;position:relative;z-index:1;}
+  .role-line strong{color:var(--fire2);}
+
+  /* CTA */
+  .cta-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.75rem;position:relative;z-index:1;}
+  .cave-btn{
+    font-family:'Bungee',sans-serif;font-size:.7rem;letter-spacing:.02em;
+    color:var(--cave);background:linear-gradient(180deg,var(--fire2),var(--fire));
+    padding:.9rem 1.5rem;border:2px solid #1a120c;
+    display:inline-flex;align-items:center;gap:.5rem;
+    box-shadow:3px 3px 0 rgba(0,0,0,.4);
+  }
+  .cave-btn.ghost{background:transparent;color:var(--bone);border-color:var(--stone-lt);box-shadow:none;}
+
+  @media (max-width:640px){
+    nav{padding:1rem 1.25rem;}
+    main{padding:6rem 1.25rem 3rem;}
+    .tablet{padding:1.5rem 1.3rem;margin:2rem 0;}
+    .award-strip{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">DD.CAVE</a>
+  <a href="index.html" class="nav-back">Level Select</a>
+</nav>
+
+<main>
+
+  <p class="hero-tag">Level 1-5 — Local Multiplayer Brawler</p>
+  <h1 class="hero-title">Bronze Age Brawl</h1>
+  <p class="hero-tagline">A scrappy stone-age arena brawler, built with two other developers for Games Fleadh 2024 — and it walked away with an award.</p>
+
+  <div class="award-strip">
+    <div class="medal">🏆</div>
+    <div class="award-text">
+      <b>Best Gameplay — Games Fleadh 2024</b>
+      <span>Judged live against every other team's build on the showroom floor</span>
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-chip"><div class="stat-label">Year</div><div class="stat-val">2024</div></div>
+    <div class="stat-chip"><div class="stat-label">Role</div><div class="stat-val">Gameplay & AI</div></div>
+    <div class="stat-chip"><div class="stat-label">Team</div><div class="stat-val">3 Developers</div></div>
+    <div class="stat-chip"><div class="stat-label">Status</div><div class="stat-val" style="color:var(--fire2);">Shipped & Awarded</div></div>
+  </div>
+
+  <div class="tablet">
+    <p class="tablet-eyebrow">Objective</p>
+    <h2 class="tablet-title">What Is It?</h2>
+    <p class="body-text">
+      A local arena brawler where stone-age fighters square off using clubs, spears and sheer
+      bad temper. The team brainstormed the concept together, then built out a roster of
+      opponents each with their own attack pattern.
+    </p>
+    <p class="body-text">
+      Under the hood, every opponent is a <strong>polymorphic class</strong> — enemies are
+      dynamically assigned to a shared array of base-class pointers, so new fighter types can
+      be added without touching the game loop that drives them.
+    </p>
+  </div>
+
+  <div class="tablet">
+    <p class="tablet-eyebrow">Loadout</p>
+    <h2 class="tablet-title">Tech Stack</h2>
+    <div class="loadout-grid">
+      <div class="loadout-item"><div class="loadout-name">C++</div><div class="loadout-desc">Core language, object-oriented throughout</div></div>
+      <div class="loadout-item"><div class="loadout-name">Polymorphism</div><div class="loadout-desc">Base-class opponent interface, overridden per fighter</div></div>
+      <div class="loadout-item"><div class="loadout-name">Pointer Array</div><div class="loadout-desc">Array of base-class pointers driving every active opponent</div></div>
+      <div class="loadout-item"><div class="loadout-name">SFML</div><div class="loadout-desc">Rendering, input and sprite handling</div></div>
+    </div>
+  </div>
+
+  <div class="tablet">
+    <p class="tablet-eyebrow">Achievements</p>
+    <h2 class="tablet-title">What Was Built</h2>
+    <ul class="achv-list">
+      <li>Polymorphic opponent system — every fighter shares a base interface but overrides its own attack behaviour</li>
+      <li>Array of opponent pointers, letting the roster grow without touching core game logic</li>
+      <li>Full local combat loop: health, hit detection, knockback and round-based scoring</li>
+      <li>Built and iterated the concept from scratch as a three-person team inside a tight event deadline</li>
+      <li>Live-demoed the finished build to judges and the public on the Games Fleadh show floor</li>
+      <li>Walked away with the <strong>Best Gameplay</strong> award, judged against every other team entered</li>
+    </ul>
+  </div>
+
+  <div class="tablet boss-tablet">
+    <p class="boss-label">BOSS FIGHT — BIGGEST CHALLENGE</p>
+    <h2 class="tablet-title">Wrangling Pointers to an Array of Enemies</h2>
+    <p class="body-text" style="margin-bottom:0;">
+      Every opponent on screen lived behind a base-class pointer in a shared array, so the
+      game loop could treat a dozen different fighter types identically — call one function,
+      let polymorphism route it to the right attack. The hard part was keeping those pointers
+      honest: making sure a defeated enemy was cleaned up properly instead of leaving a
+      dangling pointer behind, and that the array never got indexed out of bounds while
+      fighters were being added and removed mid-match. Getting that memory management right,
+      under an event deadline with three people touching the same code, was the real fight.
+    </p>
+  </div>
+
+  <div class="tablet">
+    <p class="tablet-eyebrow">Party</p>
+    <h2 class="tablet-title">My Role</h2>
+    <p class="role-line">
+      <strong>Team of 3</strong> — designed the opponent system, building the polymorphic
+      base class and the array of pointers that drives every fighter through it. On the show
+      floor, I was also the one on the mic getting passers-by to stop and actually pick up a
+      controller — the game doesn't win an award if nobody plays it.
+    </p>
+    <div class="cta-row">
+      <a href="index.html" class="cave-btn ghost">◀ Level Select</a>
+    </div>
+  </div>
+
+</main>
+
+</body>
+</html>
